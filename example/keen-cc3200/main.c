@@ -36,23 +36,7 @@
 
 //*****************************************************************************
 //
-// Application Name     -   SSL Demo
-// Application Overview -   This is a sample application demonstrating the
-//                          use of secure sockets on a CC3200 device.The
-//                          application connects to an AP and
-//                          tries to establish a secure connection to the
-//                          Google server.
-// Application Details  -
-// docs\examples\CC32xx_SSL_Demo_Application.pdf
-// or
-// http://processors.wiki.ti.com/index.php/CC32xx_SSL_Demo_Application
-//
-//*****************************************************************************
-
-
-//*****************************************************************************
-//
-//! \addtogroup ssl
+//! \addtogroup keen
 //! @{
 //
 //*****************************************************************************
@@ -77,14 +61,15 @@
 #include "uart_if.h"
 #endif
 
+#include "http_client.h"
 
 #define APPLICATION_NAME        "SSL"
 #define APPLICATION_VERSION     "1.1.0"
 
-#define SERVER_NAME                "www.google.com"
-#define GOOGLE_DST_PORT             443
+#define SERVER_NAME                "api.keen.io"
+#define DST_PORT             443
 
-#define SL_SSL_CA_CERT_FILE_NAME        "/cert/testcacert.der"
+#define SL_CA_CERT_FILE_NAME        "/cert/digicert.der"
 
 #define DATE                18    /* Current Date */
 #define MONTH               6     /* Month 1-12 */
@@ -150,7 +135,7 @@ static long WlanConnect();
 static int set_time();
 static void BoardInit(void);
 static long InitializeAppVariables();
-static long ssl();
+static long keen();
 
 //*****************************************************************************
 // SimpleLink Asynchronous Event Handlers -- Start
@@ -679,7 +664,7 @@ static int set_time()
 //!    LED2 is turned solid in case of failure
 //!
 //*****************************************************************************
-static long ssl()
+static long keen()
 {
     SlSockAddrIn_t    Addr;
     int    iAddrSize;
@@ -766,7 +751,7 @@ static long ssl()
     }
 
     Addr.sin_family = SL_AF_INET;
-    Addr.sin_port = sl_Htons(GOOGLE_DST_PORT);
+    Addr.sin_port = sl_Htons(DST_PORT);
     Addr.sin_addr.s_addr = sl_Htonl(uiIP);
     iAddrSize = sizeof(SlSockAddrIn_t);
     //
@@ -803,13 +788,10 @@ static long ssl()
         return lRetVal;
     }
 
-    //
-    //configure the socket with GOOGLE CA certificate - for server verification
-    //
     lRetVal = sl_SetSockOpt(iSockID, SL_SOL_SOCKET, \
                            SL_SO_SECURE_FILES_CA_FILE_NAME, \
-                           SL_SSL_CA_CERT_FILE_NAME, \
-                           strlen(SL_SSL_CA_CERT_FILE_NAME));
+                           SL_CA_CERT_FILE_NAME, \
+                           strlen(SL_CA_CERT_FILE_NAME));
 
     if(lRetVal < 0)
     {
@@ -818,12 +800,11 @@ static long ssl()
         return lRetVal;
     }
 
-    /* connect to the peer device - Google server */
     lRetVal = sl_Connect(iSockID, ( SlSockAddr_t *)&Addr, iAddrSize);
 
     if(lRetVal < 0)
     {
-        UART_PRINT("Device couldn't connect to Google server \n\r");
+        UART_PRINT("Device couldn't connect to KeenIO server \n\r");
         GPIO_IF_LedOn(MCU_RED_LED_GPIO);
         return lRetVal;
     }
@@ -857,7 +838,7 @@ void main()
         InitTerm();
     #endif
 
-    lRetVal = ssl();
+    lRetVal = keen();
     if(lRetVal < 0)
     {
         ERR_PRINT(lRetVal);
