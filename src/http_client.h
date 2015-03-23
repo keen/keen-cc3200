@@ -28,6 +28,8 @@
             }
 #endif
 
+#include "simplelink.h"
+
 #include <string.h>
 
 int get(const char *url);
