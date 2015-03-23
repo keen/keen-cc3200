@@ -38,6 +38,8 @@ int post(const char *url, const char *data);
 int request(int socket);
 int response(int socket);
 
+int make_connect(const char *host);
+
 void make_request(const char *method, const char *url, const char *data);
 
 void clear_request_buffer();

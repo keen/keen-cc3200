@@ -11,6 +11,10 @@ unsigned char request_buffer[BUFF_SIZE];
 
 int get(const char *url) {
 	int transfer_len = 0;
+	int socket = 0;
+
+	socket = make_connect("");
+	ASSERT_ON_ERROR(socket);
 
 	make_request(HTTP_METHOD_GET, url, 0);
 
@@ -22,6 +26,10 @@ int get(const char *url) {
 
 int post(const char *url, const char *data) {
 	int transfer_len = 0;
+	int socket = 0;
+
+	socket = make_connect("");
+	ASSERT_ON_ERROR(socket);
 
 	make_request(HTTP_METHOD_POST, url, data);
 
@@ -31,9 +39,20 @@ int post(const char *url, const char *data) {
 	return response(socket);
 }
 
-void make_request(const char *method, const char *url, const char *data) {
-	int transfer_len = 0;
+int make_connect(const char *host) {
+	//SlSockAddrIn_t addr;
+	//int addr_size;
+	//unsigned char uc_method = SL_SO_SEC_METHOD_TLSV1_2;
+	//unsigned int ui_ip, ui_cipher = SL_SEC_MASK_TLS_DHE_RSA_WITH_AES_256_CBC_SHA;
+	//long error_code;
+	//int socket;
 
+	//error_code = sl_NetAppDnsGetHostByName(host, strlen((const char *)host), (unsigned long *)&ui_ip, SL_AF_INET);
+
+	return 0;
+}
+
+void make_request(const char *method, const char *url, const char *data) {
 	clear_request_buffer();
 
 	strcpy((char *)request_buffer, method);
@@ -71,7 +90,7 @@ void make_request(const char *method, const char *url, const char *data) {
 	strcat((char *)request_buffer, "\r\n");
 }
 
-int request(socket) {
+int request(int socket) {
 	int transfer_len = 0;
 
 	transfer_len = sl_Send(socket, request_buffer, strlen((const char *)request_buffer), 0);
