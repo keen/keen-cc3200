@@ -22,7 +22,7 @@
             {\
                  if(error_code < 0) \
                    {\
-                        ERR_PRINT(error_code);\
+                        ;\
                         return error_code;\
                  }\
             }
