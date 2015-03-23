@@ -62,9 +62,10 @@
 #endif
 
 #include "http_client.h"
+#include "keen_client.h"
 
-#define APPLICATION_NAME        "SSL"
-#define APPLICATION_VERSION     "1.1.0"
+#define APPLICATION_NAME        "KeenExample"
+#define APPLICATION_VERSION     "1.0"
 
 #define SERVER_NAME                "api.keen.io"
 #define DST_PORT             443
