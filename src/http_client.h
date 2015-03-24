@@ -17,6 +17,10 @@
 #define HTTP_METHOD_GET      "GET"
 #define HTTP_METHOD_POST     "POST"
 
+#define HTTPS_PORT           443
+
+#define CA_CERT_FILE_NAME   "/cert/digicert.der"
+
 #ifndef ASSERT_ON_ERROR
 #define ASSERT_ON_ERROR(error_code)\
             {\
@@ -38,7 +42,7 @@ int post(const char *url, const char *data);
 int request(int socket);
 int response(int socket);
 
-int make_connect(const char *host);
+int make_connect(char *host);
 
 void make_request(const char *method, const char *url, const char *data);
 

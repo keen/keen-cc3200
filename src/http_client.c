@@ -39,17 +39,38 @@ int post(const char *url, const char *data) {
 	return response(socket);
 }
 
-int make_connect(const char *host) {
-	//SlSockAddrIn_t addr;
-	//int addr_size;
-	//unsigned char uc_method = SL_SO_SEC_METHOD_TLSV1_2;
-	//unsigned int ui_ip, ui_cipher = SL_SEC_MASK_TLS_DHE_RSA_WITH_AES_256_CBC_SHA;
-	//long error_code;
-	//int socket;
+int make_connect(char *host) {
 
-	//error_code = sl_NetAppDnsGetHostByName(host, strlen((const char *)host), (unsigned long *)&ui_ip, SL_AF_INET);
+	SlSockAddrIn_t addr;
+	int addr_size;
+	unsigned char uc_method = SL_SO_SEC_METHOD_TLSV1_2;
+	unsigned int ui_ip, ui_cipher = SL_SEC_MASK_TLS_DHE_RSA_WITH_AES_256_CBC_SHA;
+	long error_code;
+	int sock_id;
 
-	return 0;
+	error_code = sl_NetAppDnsGetHostByName((signed char *)host, strlen((const char *)host), (unsigned long *)&ui_ip, SL_AF_INET);
+	ASSERT_ON_ERROR(error_code);
+
+	addr.sin_family = SL_AF_INET;
+	addr.sin_port = sl_Htons(HTTPS_PORT);
+	addr.sin_addr.s_addr = sl_Htonl(ui_ip);
+	addr_size = sizeof(SlSockAddrIn_t);
+
+	sock_id = sl_Socket(SL_AF_INET,SL_SOCK_STREAM, SL_SEC_SOCKET);
+
+	ASSERT_ON_ERROR(error_code);
+	error_code = sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECMETHOD, &uc_method, sizeof(uc_method));
+	ASSERT_ON_ERROR(error_code);
+
+	error_code = sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECURE_MASK, &ui_cipher, sizeof(ui_cipher));
+	ASSERT_ON_ERROR(error_code);
+
+	error_code = sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECURE_FILES_CA_FILE_NAME, CA_CERT_FILE_NAME, strlen(CA_CERT_FILE_NAME));
+	ASSERT_ON_ERROR(error_code);
+
+	error_code = sl_Connect(sock_id, (SlSockAddr_t *)&addr, addr_size);
+
+	return sock_id;
 }
 
 void make_request(const char *method, const char *url, const char *data) {
