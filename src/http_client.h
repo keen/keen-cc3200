@@ -19,7 +19,7 @@
 
 #define HTTPS_PORT           443
 
-#define CA_CERT_FILE_NAME   "/cert/digicert.der"
+#define CA_CERT_FILE_NAME   "/cert/DigiCertHighAssuranceEVRootCA.cer"
 
 #ifndef ASSERT_ON_ERROR
 #define ASSERT_ON_ERROR(error_code)\
