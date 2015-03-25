@@ -36,6 +36,8 @@
 
 #include <string.h>
 
+extern unsigned char request_buffer[BUFF_SIZE];
+
 int get(const char *url);
 int post(const char *url, const char *data);
 
