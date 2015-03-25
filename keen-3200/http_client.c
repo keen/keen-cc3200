@@ -11,32 +11,40 @@ unsigned char request_buffer[BUFF_SIZE];
 
 int get(const char *url) {
 	int transfer_len = 0;
-	int socket = 0;
+	int sock_id = 0;
 
-	socket = make_connect("");
-	ASSERT_ON_ERROR(socket);
+#ifdef SERVER_NAME
+	sock_id = make_connect(SERVER_NAME);
+#else
+	sock_id = make_connect("");
+#endif
+	ASSERT_ON_ERROR(sock_id);
 
 	make_request(HTTP_METHOD_GET, url, 0);
 
-	transfer_len = request(socket);
+	transfer_len = request(sock_id);
 	ASSERT_ON_ERROR(transfer_len);
 
-	return response(socket);
+	return response(sock_id);
 }
 
 int post(const char *url, const char *data) {
 	int transfer_len = 0;
-	int socket = 0;
+	int sock_id = 0;
 
-	socket = make_connect("");
-	ASSERT_ON_ERROR(socket);
+#ifdef SERVER_NAME
+	sock_id = make_connect(SERVER_NAME);
+#else
+	sock_id = make_connect("");
+#endif
+	ASSERT_ON_ERROR(sock_id);
 
 	make_request(HTTP_METHOD_POST, url, data);
 
-	transfer_len = request(socket);
+	transfer_len = request(sock_id);
 	ASSERT_ON_ERROR(transfer_len);
 
-	return response(socket);
+	return response(sock_id);
 }
 
 int make_connect(char *host) {
@@ -111,21 +119,21 @@ void make_request(const char *method, const char *url, const char *data) {
 	strcat((char *)request_buffer, "\r\n");
 }
 
-int request(int socket) {
+int request(int sock_id) {
 	int transfer_len = 0;
 
-	transfer_len = sl_Send(socket, request_buffer, strlen((const char *)request_buffer), 0);
+	transfer_len = sl_Send(sock_id, request_buffer, strlen((const char *)request_buffer), 0);
 	ASSERT_ON_ERROR(transfer_len);
 
 	return HTTP_SUCCESS;
 }
 
-int response(socket) {
+int response(sock_id) {
 	int transfer_len = 0;
 
 	clear_request_buffer();
 
-	transfer_len = sl_Recv(socket, &request_buffer[0], MAX_BUFF_SIZE, 0);
+	transfer_len = sl_Recv(sock_id, &request_buffer[0], MAX_BUFF_SIZE, 0);
 	ASSERT_ON_ERROR(transfer_len);
 
 	return HTTP_SUCCESS;
