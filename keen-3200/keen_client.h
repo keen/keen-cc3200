@@ -8,13 +8,23 @@
 #ifndef KEEN_CLIENT_H_
 #define KEEN_CLIENT_H_
 
+#define MAX_URI_SIZE 128
+#define URI_SIZE MAX_URI_SIZE + 1
+
 #define	SERVER_NAME        "api.keen.io"
 #define	CONTENTTYPE_HEADER "application/json"
 #define	USERAGENT_HEADER   "CC3200/0.1a"
 
 #include "http_client.h"
 
+extern char *api_version;
+extern char *project_id;
+
+char resource_buffer[URI_SIZE];
+
 int add_event(const char *event_collection, const char *event_body);
 int add_events(const char *events);
+
+void build_resource(const char *event_collection);
 
 #endif /* KEEN_CLIENT_H_ */
