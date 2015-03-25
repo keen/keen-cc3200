@@ -14,7 +14,7 @@
 
 #include "http_client.h"
 
-int add_event();
-int add_events();
+int add_event(const char *event_collection, const char *event_body);
+int add_events(const char *events);
 
 #endif /* KEEN_CLIENT_H_ */
