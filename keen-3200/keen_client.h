@@ -19,6 +19,9 @@
 
 extern char *api_version;
 extern char *project_id;
+extern char *write_key;
+extern char *read_key;
+extern char *master_key;
 
 char resource_buffer[URI_SIZE];
 
