@@ -14,41 +14,37 @@
 #define HTTP_SUCCESS       0
 #define HTTP_FAILURE       -1
 
-#define HTTP_METHOD_GET      "GET"
-#define HTTP_METHOD_POST     "POST"
+#define HTTP_METHOD_GET    "GET"
+#define HTTP_METHOD_POST   "POST"
 
-#define HTTPS_PORT           443
+#define HTTPS_PORT         443
 
-#define CA_CERT_FILE_NAME   "/cert/DigiCertHighAssuranceEVRootCA.cer"
+#define CA_CERT_FILE_NAME  "/cert/DigiCertHighAssuranceEVRootCA.cer"
 
-#ifndef ASSERT_ON_ERROR
-#define ASSERT_ON_ERROR(error_code)\
-            {\
-                 if(error_code < 0) \
-                   {\
-                        ;\
-                        return error_code;\
-                 }\
-            }
-#endif
+#define	SERVER_NAME        "api.keen.io"
+#define	CONTENTTYPE_HEADER "application/json"
+#define	USERAGENT_HEADER   "CC3200/0.1a"
 
 #include "simplelink.h"
 
+#include <stdio.h>
 #include <string.h>
 
 extern unsigned char request_buffer[BUFF_SIZE];
 
-int get(const char *url);
-int post(const char *url, const char *data);
+typedef struct {
+	const char *auth_header;
+	const char *contenttype_header;
+	const char *host_header;
+	const char *useragent_header;
+} http_headers;
 
-int request(int socket);
-int response(int socket);
-
-int make_connect(char *host);
-
-void make_request(const char *method, const char *url, const char *data);
+int http_connect(char *host);
+int http_get(int sock_id, const char *url, http_headers *headers);
+int http_post(int sock_id, const char *url, const char *data, http_headers *headers);
+int http_request(int sock_id, const char *method, const char *url, const char *data, http_headers *headers);
+int http_response(int sock_id);
 
 void clear_request_buffer();
-void print_request_buffer();
 
 #endif /* HTTP_CLIENT_H_ */
