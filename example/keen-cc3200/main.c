@@ -667,20 +667,21 @@ static int set_time()
 //*****************************************************************************
 static long keen()
 {
-    SlSockAddrIn_t    Addr;
-    int    iAddrSize;
-    unsigned char    ucMethod = SL_SO_SEC_METHOD_SSLV3;
-    unsigned int uiIP,uiCipher = SL_SEC_MASK_SSL_RSA_WITH_RC4_128_SHA;
-    long lRetVal = -1;
-    int iSockID;
+	SlSockAddrIn_t addr;
+	int addr_size;
+	unsigned char uc_method = SL_SO_SEC_METHOD_TLSV1_2;
+	unsigned int ui_ip, ui_cipher = SL_SEC_MASK_TLS_DHE_RSA_WITH_AES_256_CBC_SHA;
+	long error_code;
+	int sock_id;
+
 
     GPIO_IF_LedConfigure(LED1|LED3);
 
     GPIO_IF_LedOff(MCU_RED_LED_GPIO);
     GPIO_IF_LedOff(MCU_GREEN_LED_GPIO); 
 
-    lRetVal = InitializeAppVariables();
-    ASSERT_ON_ERROR(lRetVal);
+    error_code = InitializeAppVariables();
+    ASSERT_ON_ERROR(error_code);
 
     //
     // Following function configure the device to default state by cleaning
@@ -693,13 +694,13 @@ static long keen()
     // Note that all profiles and persistent settings that were done on the
     // device will be lost
     //
-    lRetVal = ConfigureSimpleLinkToDefaultState();
-    if(lRetVal < 0)
+    error_code = ConfigureSimpleLinkToDefaultState();
+    if(error_code < 0)
     {
-      if (DEVICE_NOT_IN_STATION_MODE == lRetVal)
+      if (DEVICE_NOT_IN_STATION_MODE == error_code)
           UART_PRINT("Failed to configure the device in its default state \n\r");
 
-      return lRetVal;
+      return error_code;
     }
 
     UART_PRINT("Device is configured in default state \n\r");
@@ -710,11 +711,11 @@ static long keen()
     // Assumption is that the device is configured in station mode already
     // and it is in its default state
     //
-    lRetVal = sl_Start(0, 0, 0);
-    if (lRetVal < 0 || ROLE_STA != lRetVal)
+    error_code = sl_Start(0, 0, 0);
+    if (error_code < 0 || ROLE_STA != error_code)
     {
         UART_PRINT("Failed to start the device \n\r");
-        return lRetVal;
+        return error_code;
     }
 
     UART_PRINT("Device started as STATION \n\r");
@@ -722,96 +723,84 @@ static long keen()
     //
     //Connecting to WLAN AP
     //
-    lRetVal = WlanConnect();
-    if(lRetVal < 0)
+    error_code = WlanConnect();
+    if(error_code < 0)
     {
         UART_PRINT("Failed to establish connection w/ an AP \n\r");
         GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        return error_code;
     }
 
     UART_PRINT("Connection established w/ AP and IP is aquired \n\r");
 
     //Set time of the device for certificate verification.
-    lRetVal = set_time();
-    if(lRetVal < 0)
+    error_code = set_time();
+    if(error_code < 0)
     {
         UART_PRINT("Unable to set time in the device");
-        return lRetVal;
+        return error_code;
     }
 
+    /*
+    char *host = "api.keen.io";
 
-    lRetVal = sl_NetAppDnsGetHostByName(g_Host, strlen((const char *)g_Host),
-                                    (unsigned long*)&uiIP, SL_AF_INET);
-
-    if(lRetVal < 0)
+    error_code = sl_NetAppDnsGetHostByName((signed char *)host, strlen((const char *)host), (unsigned long *)&ui_ip, SL_AF_INET);
+    if(error_code < 0)
     {
-        UART_PRINT("Device couldn't retrive the host name \n\r");
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        UART_PRINT("Unable to resolve dns");
+        return error_code;
     }
 
-    Addr.sin_family = SL_AF_INET;
-    Addr.sin_port = sl_Htons(DST_PORT);
-    Addr.sin_addr.s_addr = sl_Htonl(uiIP);
-    iAddrSize = sizeof(SlSockAddrIn_t);
-    //
-    // opens a secure socket 
-    //
-    iSockID = sl_Socket(SL_AF_INET,SL_SOCK_STREAM, SL_SEC_SOCKET);
-    if( iSockID < 0 )
+	addr.sin_family = SL_AF_INET;
+	addr.sin_port = sl_Htons(HTTPS_PORT);
+	addr.sin_addr.s_addr = sl_Htonl(ui_ip);
+	addr_size = sizeof(SlSockAddrIn_t);
+
+	sock_id = sl_Socket(SL_AF_INET,SL_SOCK_STREAM, SL_SEC_SOCKET);
+    if(sock_id < 0)
     {
-        UART_PRINT("Device unable to create secure socket \n\r");
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        UART_PRINT("Unable to create socket");
+        return sock_id;
     }
 
-    //
-    // configure the socket as SSLV3.0 
-    //
-    lRetVal = sl_SetSockOpt(iSockID, SL_SOL_SOCKET, SL_SO_SECMETHOD, &ucMethod,\
-                               sizeof(ucMethod));
-    if(lRetVal < 0)
+    error_code = sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECMETHOD, &uc_method, sizeof(uc_method));
+    if(error_code < 0)
     {
-        UART_PRINT("Device couldn't set socket options \n\r");
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        UART_PRINT("Unable to set sockopt1");
+        return error_code;
     }
-    //
-    //configure the socket as RSA with RC4 128 SHA 
-    //
-    lRetVal = sl_SetSockOpt(iSockID, SL_SOL_SOCKET, SL_SO_SECURE_MASK, &uiCipher,\
-                           sizeof(uiCipher));
-    if(lRetVal < 0)
+
+    sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECURE_MASK, &ui_cipher, sizeof(ui_cipher));
+    if(error_code < 0)
     {
-        UART_PRINT("Device couldn't set socket options \n\r");
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        UART_PRINT("Unable to set sockopt2");
+        return error_code;
     }
 
-    lRetVal = sl_SetSockOpt(iSockID, SL_SOL_SOCKET, \
-                           SL_SO_SECURE_FILES_CA_FILE_NAME, \
-                           SL_CA_CERT_FILE_NAME, \
-                           strlen(SL_CA_CERT_FILE_NAME));
+    UART_PRINT("using cert...");
+    UART_PRINT(CA_CERT_FILE_NAME);
+    UART_PRINT("\n");
 
-    if(lRetVal < 0)
+    sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECURE_FILES_CA_FILE_NAME, CA_CERT_FILE_NAME, strlen(CA_CERT_FILE_NAME));
+    if(error_code < 0)
     {
-        UART_PRINT("Device couldn't set socket options \n\r");
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        UART_PRINT("Unable to set sockopt3");
+        return error_code;
     }
 
-    lRetVal = sl_Connect(iSockID, ( SlSockAddr_t *)&Addr, iAddrSize);
-
-    if(lRetVal < 0)
+    error_code = sl_Connect(sock_id, (SlSockAddr_t *)&addr, addr_size);
+    if(error_code < 0)
     {
-        UART_PRINT("Device couldn't connect to KeenIO server \n\r");
-        GPIO_IF_LedOn(MCU_RED_LED_GPIO);
-        return lRetVal;
+        UART_PRINT("Unable to connect to socket!");
+        return error_code;
     }
 
-    GPIO_IF_LedOff(MCU_RED_LED_GPIO);
-    GPIO_IF_LedOn(MCU_GREEN_LED_GPIO);
+	*/
+
+
+
+    UART_PRINT("Successful so far!");
+
     return SUCCESS;
 }
 
@@ -826,7 +815,7 @@ static long keen()
 //!
 //*****************************************************************************
 void main()
-{
+	{
     long lRetVal = -1;
     //
     // Initialize board configuration
