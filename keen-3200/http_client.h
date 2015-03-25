@@ -21,10 +21,6 @@
 
 #define CA_CERT_FILE_NAME  "/cert/DigiCertHighAssuranceEVRootCA.cer"
 
-#define	SERVER_NAME        "api.keen.io"
-#define	CONTENTTYPE_HEADER "application/json"
-#define	USERAGENT_HEADER   "CC3200/0.1a"
-
 #include "simplelink.h"
 
 #include <stdio.h>
