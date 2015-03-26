@@ -23,8 +23,6 @@ extern char *write_key;
 extern char *read_key;
 extern char *master_key;
 
-char resource_buffer[URI_SIZE];
-
 int add_event(const char *event_collection, const char *event_body);
 int add_events(const char *events);
 
