@@ -364,7 +364,7 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
             break;
 
         default:
-        	break;
+            break;
             UART_PRINT("[SOCK EVENT] - Unexpected Event [%x0x]\n\n",pSock->Event);
     }
 }
@@ -738,9 +738,9 @@ static long keen()
     error_code = add_event("ayuns", "{}");
 
     if (error_code < 0) {
-		UART_PRINT("Error posting event to API \n\r");
-		return error_code;
-	}
+        UART_PRINT("Error posting event to API \n\r");
+        return error_code;
+    }
 
     UART_PRINT(request_buffer);
     UART_PRINT("\n\r");
@@ -759,7 +759,7 @@ static long keen()
 //!
 //*****************************************************************************
 void main()
-	{
+    {
     long lRetVal = -1;
     //
     // Initialize board configuration
