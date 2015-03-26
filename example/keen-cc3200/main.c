@@ -67,19 +67,12 @@
 #define APPLICATION_NAME        "KeenExample"
 #define APPLICATION_VERSION     "1.0"
 
-#define SERVER_NAME                "api.keen.io"
-#define DST_PORT             443
-
-#define SL_CA_CERT_FILE_NAME        "/cert/digicert.der"
-
 #define DATE                18    /* Current Date */
 #define MONTH               6     /* Month 1-12 */
 #define YEAR                2014  /* Current year */
 #define HOUR                12    /* Time - hours */
 #define MINUTE              32    /* Time - minutes */
 #define SECOND              0     /* Time - seconds */
-
-
 
 // Application specific status/error codes
 typedef enum{
@@ -116,7 +109,13 @@ unsigned long  g_ulPingPacketsRecv = 0; //Number of Ping Packets received
 unsigned long  g_ulGatewayIP = 0; //Network Gateway IP address
 unsigned char  g_ucConnectionSSID[SSID_LEN_MAX+1]; //Connection SSID
 unsigned char  g_ucConnectionBSSID[BSSID_LEN_MAX]; //Connection BSSID
-signed char    *g_Host = SERVER_NAME;
+
+char *api_version = "3.0";
+char *project_id = "000000000000000000000000";
+char *write_key = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+char *read_key = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+char *master_key = "00000000000000000000000000000000";
+
 SlDateTime g_time;
 #if defined(ccs) || defined(gcc)
 extern void (* const g_pfnVectors[])(void);
@@ -365,6 +364,7 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
             break;
 
         default:
+        	break;
             UART_PRINT("[SOCK EVENT] - Unexpected Event [%x0x]\n\n",pSock->Event);
     }
 }
@@ -388,7 +388,6 @@ static long InitializeAppVariables()
 {
     g_ulStatus = 0;
     g_ulGatewayIP = 0;
-    g_Host = SERVER_NAME;
     memset(g_ucConnectionSSID,0,sizeof(g_ucConnectionSSID));
     memset(g_ucConnectionBSSID,0,sizeof(g_ucConnectionBSSID));
     return SUCCESS;
@@ -667,13 +666,7 @@ static int set_time()
 //*****************************************************************************
 static long keen()
 {
-	SlSockAddrIn_t addr;
-	int addr_size;
-	unsigned char uc_method = SL_SO_SEC_METHOD_TLSV1_2;
-	unsigned int ui_ip, ui_cipher = SL_SEC_MASK_TLS_DHE_RSA_WITH_AES_256_CBC_SHA;
 	long error_code;
-	int sock_id;
-
 
     GPIO_IF_LedConfigure(LED1|LED3);
 
@@ -741,65 +734,16 @@ static long keen()
         return error_code;
     }
 
-    /*
-    char *host = "api.keen.io";
+    //Set time of the device for certificate verification.
+    error_code = add_event("ayuns", "{}");
 
-    error_code = sl_NetAppDnsGetHostByName((signed char *)host, strlen((const char *)host), (unsigned long *)&ui_ip, SL_AF_INET);
-    if(error_code < 0)
-    {
-        UART_PRINT("Unable to resolve dns");
-        return error_code;
-    }
+    if (error_code < 0) {
+		UART_PRINT("Error posting event to API \n\r");
+		return error_code;
+	}
 
-	addr.sin_family = SL_AF_INET;
-	addr.sin_port = sl_Htons(HTTPS_PORT);
-	addr.sin_addr.s_addr = sl_Htonl(ui_ip);
-	addr_size = sizeof(SlSockAddrIn_t);
-
-	sock_id = sl_Socket(SL_AF_INET,SL_SOCK_STREAM, SL_SEC_SOCKET);
-    if(sock_id < 0)
-    {
-        UART_PRINT("Unable to create socket");
-        return sock_id;
-    }
-
-    error_code = sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECMETHOD, &uc_method, sizeof(uc_method));
-    if(error_code < 0)
-    {
-        UART_PRINT("Unable to set sockopt1");
-        return error_code;
-    }
-
-    sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECURE_MASK, &ui_cipher, sizeof(ui_cipher));
-    if(error_code < 0)
-    {
-        UART_PRINT("Unable to set sockopt2");
-        return error_code;
-    }
-
-    UART_PRINT("using cert...");
-    UART_PRINT(CA_CERT_FILE_NAME);
-    UART_PRINT("\n");
-
-    sl_SetSockOpt(sock_id, SL_SOL_SOCKET, SL_SO_SECURE_FILES_CA_FILE_NAME, CA_CERT_FILE_NAME, strlen(CA_CERT_FILE_NAME));
-    if(error_code < 0)
-    {
-        UART_PRINT("Unable to set sockopt3");
-        return error_code;
-    }
-
-    error_code = sl_Connect(sock_id, (SlSockAddr_t *)&addr, addr_size);
-    if(error_code < 0)
-    {
-        UART_PRINT("Unable to connect to socket!");
-        return error_code;
-    }
-
-	*/
-
-
-
-    UART_PRINT("Successful so far!");
+    UART_PRINT(request_buffer);
+    UART_PRINT("\n\r");
 
     return SUCCESS;
 }
