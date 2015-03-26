@@ -14,10 +14,15 @@ int add_event(const char *event_collection, const char *event_body) {
 	int transfer_len;
 	http_headers headers;
 
-	headers.auth_header = 0;
 	headers.contenttype_header = CONTENTTYPE_HEADER;
 	headers.host_header = SERVER_NAME;
 	headers.useragent_header = USERAGENT_HEADER;
+
+	if (write_key) {
+		headers.auth_header = write_key;
+	} else {
+		return HTTP_FAILURE;
+	}
 
 	sock_id = http_connect(SERVER_NAME);
 
@@ -25,7 +30,9 @@ int add_event(const char *event_collection, const char *event_body) {
 		return sock_id;
 	}
 
-	transfer_len = http_post(sock_id, "", event_body, &headers);
+	build_resource(event_collection);
+
+	transfer_len = http_post(sock_id, resource_buffer, event_body, &headers);
 
 	if (transfer_len < 0) {
 		return transfer_len;
@@ -39,10 +46,15 @@ int add_events(const char *events) {
 	int transfer_len;
 	http_headers headers;
 
-	headers.auth_header = 0;
 	headers.contenttype_header = CONTENTTYPE_HEADER;
 	headers.host_header = SERVER_NAME;
 	headers.useragent_header = USERAGENT_HEADER;
+
+	if (write_key) {
+		headers.auth_header = write_key;
+	} else {
+		return HTTP_FAILURE;
+	}
 
 	sock_id = http_connect(SERVER_NAME);
 
@@ -50,7 +62,9 @@ int add_events(const char *events) {
 		return sock_id;
 	}
 
-	transfer_len = http_post(sock_id, "", events, &headers);
+	build_resource(0);
+
+	transfer_len = http_post(sock_id, resource_buffer, events, &headers);
 
 	if (transfer_len < 0) {
 		return transfer_len;
