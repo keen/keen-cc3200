@@ -666,7 +666,7 @@ static int set_time()
 //*****************************************************************************
 static long keen()
 {
-	long error_code;
+    long error_code;
 
     GPIO_IF_LedConfigure(LED1|LED3);
 
