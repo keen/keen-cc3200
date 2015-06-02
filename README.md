@@ -14,7 +14,7 @@ This library allows you to push events from the [CC3200](http://www.ti.com/produ
 
 ### Installing CCS
 
-For detailed instructions on installing Code Composer Studio, building a sample application, and configuring for your WiFi endpoint, see the [CC3200 SimpleLink Wi-Fi and IoT Solution With MCU LaunchPad Getting Started Guide](www.ti.com/lit/pdf/swru376).
+For detailed instructions on installing Code Composer Studio, building a sample application, and configuring for your WiFi endpoint, see the [CC3200 SimpleLink Wi-Fi and IoT Solution With MCU LaunchPad Getting Started Guide](http://www.ti.com/lit/pdf/swru376).
 
 ### Installing Certificate Authority 
 
