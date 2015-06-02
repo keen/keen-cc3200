@@ -121,9 +121,8 @@ int http_request(int sock_id, const char *method, const char *url, const char *d
 	}
 
 	if (data) {
-		// TODO: remove magic number and relate to BUFF_SIZE
-		char content_length[5];
-		snprintf(content_length, 5, "%d", strlen((const char *)data));
+		char content_length[BUFF_DIGITS];
+		snprintf(content_length, BUFF_DIGITS, "%d", strlen((const char *)data));
 		strncat((char *)request_buffer, "Content-Length: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 
 		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
