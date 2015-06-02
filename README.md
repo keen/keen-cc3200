@@ -4,11 +4,56 @@ This library allows you to push events from the [CC3200](http://www.ti.com/produ
 
 ## Examples
 
-```c
+An example application that links with the `keen-cc3200` library is available at [example/keen-cc3200](example/keen-cc3200). 
 
+```c
+#include "http_client.h"
+#include "keen_client.h"
+
+char *api_version = "3.0";
+char *project_id = "000000000000000000000000";
+char *write_key = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+
+error_code = WlanConnect();
+if(error_code < 0)
+{
+	return error_code;
+}
+
+error_code = set_time();
+if(error_code < 0)
+{
+	return error_code;
+}
+
+error_code = add_event("motion_detections", "{\"cat\": 1}");
+
+if (error_code < 0) {
+	return error_code;
+}
 ```
 
+The above code listing is illustrative and will not compile.
+
 ## Library Reference
+
+The `keen-cc3200` library declares five external variables that can be defined in your application. The first three, `api_version`, `project_id`, and `write_key` must be defined in your application.
+
+```c
+extern char *api_version;
+extern char *project_id;
+extern char *write_key;
+extern char *read_key;
+extern char *master_key;
+```
+
+The `keen-cc3200` library also exposes two functions, `add_event`, and `add_events`.
+
+```c
+int add_event(const char *event_collection, const char *event_body);
+int add_events(const char *events);
+
+```
 
 ## Installation
 
