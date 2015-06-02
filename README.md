@@ -36,8 +36,8 @@ In order to verify the identity of the host during TLS communications, a Root Ce
 
 ### Configuring WiFi Endpoint
 
-1. Navigate to `\path\to\CC3200SDK\_1.0.0\cc3200-sdk\example\common'
-2. Edit 'common.h'
+1. Navigate to `\path\to\CC3200SDK\_1.0.0\cc3200-sdk\example\common`
+2. Edit `common.h`
     - Set the `SSID_NAME` of your WiFi endpoint
     - Set the `SECURITY_TYPE` (likely `SL_SEC_TYPE_WPA`) endpoint
     - Set the `SECURITY_KEY` of your WiFi endpoint
@@ -51,10 +51,10 @@ git clone git@github.com:keen/keen-cc3200.git
 ```
 
 1. Start Code Composer Studio
-2. When prompted to select a workspace, enter '\path\to\keen-cc3200'
+2. When prompted to select a workspace, enter `\path\to\keen-cc3200`
     - Make sure the option to mark as default is left unchecked and select 'OK'
 3. Select 'Project > Import CCS Projects...'
-    - Browse to '\path\to\keen-cc3200\keen-cc3200' and select 'OK'
+    - Browse to `\path\to\keen-cc3200\keen-cc3200` and select 'OK'
     - Make sure that 'Automatically import...' and 'Copy projects into workspace' are left unchecked and select 'Finish'
 4. Click the hammer icon to build.
     - From the hammer drop down select 'Release' to build a Release version  
@@ -64,17 +64,17 @@ git clone git@github.com:keen/keen-cc3200.git
 Once the `keen-cc3200` library has been compiled we can compile the example application.
 
 1. Start Code Composer Studio
-2. When prompted to select a workspace, enter '\path\to\keen-cc3200\exammple'
+2. When prompted to select a workspace, enter `\path\to\keen-cc3200\exammple`
     - Make sure the option to mark as default is left unchecked and select 'OK'
 3. Select 'Project > Import CCS Projects...'
-    - Browse to '\path\to\CC3200SDK\_1.0.0' and select 'OK'
+    - Browse to `\path\to\CC3200SDK\_1.0.0` and select 'OK'
     - Select the following projects:
         - driverlib
         - oslib
         - simplelink
     - Make sure that 'Automatically import...' and 'Copy projects into workspace' are left unchecked and select 'Finish'
 4. Select 'Project > Import CCS Projects...'
-    - Browse to '\path\to\keen-cc3200\example\keen-cc3200' and select 'OK'
+    - Browse to `\path\to\keen-cc3200\example\keen-cc3200` and select 'OK'
     - Select the project keen-cc3200
     - Make sure that 'Automatically import...' and 'Copy projects into workspace' are left unchecked and select 'Finish'
 5. In the Project Explorer, build the projects in the following order:
@@ -90,7 +90,7 @@ Once the example application has been compiled we can flash it to the device and
 
 1. Select 'View > Target Configurations'
 2. Right click on 'User Defined' and select 'Import Target Configuration'
-    - Browse to '\path\to\CC3200SDK\_1.0.0\cc3200-sdk\tools\ccs\_patch\CC3200.ccxml'
+    - Browse to `\path\to\CC3200SDK\_1.0.0\cc3200-sdk\tools\ccs\_patch\CC3200.ccxml`
     - When prompted, select 'Copy files'
 3. In the Target Configurations panel right click on 'CC3200.ccxml' and select 'Set as default'
 4. The application can now be flashed to the device and debugged by clicking on the debug icon next to the hammer
