@@ -91,49 +91,46 @@ int http_request(int sock_id, const char *method, const char *url, const char *d
 
 	clear_request_buffer();
 
-	strcpy((char *)request_buffer, method);
-	strcat((char *)request_buffer, " ");
-	strcat((char *)request_buffer, url);
-	strcat((char *)request_buffer, " HTTP/1.1\r\n");
+	strncpy((char *)request_buffer, method, MAX_BUFF_SIZE);
+	strncat((char *)request_buffer, " ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+	strncat((char *)request_buffer, url, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+	strncat((char *)request_buffer, " HTTP/1.1\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 
 	if (headers->host_header) {
-		strcat((char *)request_buffer, "Host: ");
-		strcat((char *)request_buffer, headers->host_header);
-		strcat((char *)request_buffer, "\r\n");
+		strncat((char *)request_buffer, "Host: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, headers->host_header, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 	}
 
 	if (headers->auth_header) {
-		strcat((char *)request_buffer, "Authorization: ");
-		strcat((char *)request_buffer, headers->auth_header);
-		strcat((char *)request_buffer, "\r\n");
+		strncat((char *)request_buffer, "Authorization: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, headers->auth_header, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 	}
 
 	if (headers->useragent_header) {
-		strcat((char *)request_buffer, "User-Agent: ");
-		strcat((char *)request_buffer, headers->useragent_header);
-		strcat((char *)request_buffer, "\r\n");
+		strncat((char *)request_buffer, "User-Agent: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, headers->useragent_header, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 	}
 
 	if (headers->contenttype_header) {
-		strcat((char *)request_buffer, "Content-Type: ");
-		strcat((char *)request_buffer, headers->contenttype_header);
-		strcat((char *)request_buffer, "\r\n");
+		strncat((char *)request_buffer, "Content-Type: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, headers->contenttype_header, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 	}
 
 	if (data) {
-		// TODO: remove magic number and relate to BUFF_SIZE
-		char content_length[5];
-		snprintf(content_length, 5, "%d", strlen((const char *)data));
-		strcat((char *)request_buffer, "Content-Length: ");
-		strcat((char *)request_buffer, content_length);
-		strcat((char *)request_buffer, "\r\n");
+		char content_length[BUFF_DIGITS];
+		snprintf(content_length, BUFF_DIGITS, "%d", strlen((const char *)data));
+		strncat((char *)request_buffer, "Content-Length: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 
-		strcat((char *)request_buffer, "\r\n");
-		strcat((char *)request_buffer, data);
+		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, data, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 	} else {
-		strcat((char *)request_buffer, "Connection: close\r\n");
+		strncat((char *)request_buffer, "Connection: close\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 	}
-	strcat((char *)request_buffer, "\r\n");
+	strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 
 	transfer_len = sl_Send(sock_id, request_buffer, strlen((const char *)request_buffer), 0);
 

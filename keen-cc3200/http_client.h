@@ -11,6 +11,10 @@
 #define MAX_BUFF_SIZE      1460
 #define BUFF_SIZE          MAX_BUFF_SIZE + 1
 
+// MAX_BUFF_SIZE_DIGITS = floor( log10( (float) BUFF_SIZE ) + 1.0 )
+#define MAX_BUFF_DIGITS   4
+#define BUFF_DIGITS       MAX_BUFF_DIGITS + 1
+
 #define HTTP_SUCCESS       0
 #define HTTP_FAILURE       -1
 

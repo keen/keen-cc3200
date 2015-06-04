@@ -76,14 +76,14 @@ int add_events(const char *events) {
 void build_resource(const char *event_collection) {
 	memset(resource_buffer, 0, sizeof(resource_buffer));
 
-	strcpy((char *)resource_buffer, "https://api.keen.io/");
-	strcat((char *)resource_buffer, api_version);
-	strcat((char *)resource_buffer, "/projects/");
-	strcat((char *)resource_buffer, project_id);
-	strcat((char *)resource_buffer, "/events");
+	strncpy((char *)resource_buffer, "https://api.keen.io/", MAX_URI_SIZE);
+	strncat((char *)resource_buffer, api_version, MAX_URI_SIZE - strlen((const char *)resource_buffer));
+	strncat((char *)resource_buffer, "/projects/", MAX_URI_SIZE - strlen((const char *)resource_buffer));
+	strncat((char *)resource_buffer, project_id, MAX_URI_SIZE - strlen((const char *)resource_buffer));
+	strncat((char *)resource_buffer, "/events", MAX_URI_SIZE - strlen((const char *)resource_buffer));
 
 	if (event_collection) {
-		strcat((char *)resource_buffer, "/");
-		strcat((char *)resource_buffer, event_collection);
+		strncat((char *)resource_buffer, "/", MAX_URI_SIZE - strlen((const char *)resource_buffer));
+		strncat((char *)resource_buffer, event_collection, MAX_URI_SIZE - strlen((const char *)resource_buffer));
 	}
 }
