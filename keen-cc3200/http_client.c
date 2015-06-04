@@ -122,8 +122,10 @@ int http_request(int sock_id, const char *method, const char *url, const char *d
 
 	if (data) {
 		char content_length[BUFF_DIGITS];
-		snprintf(content_length, BUFF_DIGITS, "%d", strlen((const char *)data));
+		snprintf(content_length, MAX_BUFF_DIGITS, "%d", strlen((const char *)data));
 		strncat((char *)request_buffer, "Content-Length: ", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, content_length, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
+		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 
 		strncat((char *)request_buffer, "\r\n", MAX_BUFF_SIZE - strlen((const char *)request_buffer));
 		strncat((char *)request_buffer, data, MAX_BUFF_SIZE - strlen((const char *)request_buffer));
