@@ -384,17 +384,18 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
     switch( pSock->Event )
     {
         case SL_SOCKET_TX_FAILED_EVENT:
-            switch( pSock->EventData.status )
+            switch( pSock->socketAsyncEvent.SockTxFailData.status)
             {
                 case SL_ECLOSE:
                     UART_PRINT("[SOCK ERROR] - close socket (%d) operation "
                                "failed to transmit all queued packets\n\n",
-                               pSock->EventData.sd);
+                               pSock->socketAsyncEvent.SockTxFailData.sd);
                     break;
                 default:
                     UART_PRINT("[SOCK ERROR] - TX FAILED  :  socket %d , "
                                "reason (%d) \n\n",
-                               pSock->EventData.sd, pSock->EventData.status);
+                               pSock->socketAsyncEvent.SockTxFailData.sd, pSock->socketAsyncEvent.SockTxFailData.status);
+                    break;
             }
             break;
 
