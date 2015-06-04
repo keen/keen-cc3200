@@ -374,6 +374,7 @@ void SimpleLinkGeneralEventHandler(SlDeviceEvent_t *pDevEvent)
 //! \return None
 //!
 //*****************************************************************************
+#ifdef CC3200SDK_1_1_0
 void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
 {
     if(!pSock)
@@ -395,7 +396,6 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
                     UART_PRINT("[SOCK ERROR] - TX FAILED  :  socket %d , "
                                "reason (%d) \n\n",
                                pSock->socketAsyncEvent.SockTxFailData.sd, pSock->socketAsyncEvent.SockTxFailData.status);
-                    break;
             }
             break;
 
@@ -404,6 +404,37 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
             //UART_PRINT("[SOCK EVENT] - Unexpected Event [%x0x]\n\n",pSock->Event);
     }
 }
+#else
+void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
+{
+    if(!pSock)
+    {
+        return;
+    }
+
+    switch( pSock->Event )
+    {
+        case SL_SOCKET_TX_FAILED_EVENT:
+            switch( pSock->EventData.status )
+            {
+                case SL_ECLOSE:
+                    UART_PRINT("[SOCK ERROR] - close socket (%d) operation "
+                               "failed to transmit all queued packets\n\n",
+                               pSock->EventData.sd);
+                    break;
+                default:
+                    UART_PRINT("[SOCK ERROR] - TX FAILED  :  socket %d , "
+                               "reason (%d) \n\n",
+                               pSock->EventData.sd, pSock->EventData.status);
+            }
+            break;
+
+        default:
+            break;
+            //UART_PRINT("[SOCK EVENT] - Unexpected Event [%x0x]\n\n",pSock->Event);
+    }
+}
+#endif
 
 
 //*****************************************************************************
