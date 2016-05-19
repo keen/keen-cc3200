@@ -2,9 +2,12 @@
 
 This library allows you to push events from the [CC3200](http://www.ti.com/product/cc3200) to [https://api.keen.io](https://api.keen.io)
 
+### Community-Supported SDK
+This is an _unofficial_ community supported SDK. If you find any issues or have a request please post an [issue](https://github.com/keen/keen-cc3200/issues).
+
 ## Examples
 
-An example application that links with the `keen-cc3200` library is available at [example/keen-cc3200](example/keen-cc3200). 
+An example application that links with the `keen-cc3200` library is available at [example/keen-cc3200](example/keen-cc3200).
 
 ```c
 #include "http_client.h"
@@ -61,7 +64,7 @@ int add_events(const char *events);
 
 For detailed instructions on installing Code Composer Studio, building a sample application, and configuring for your WiFi endpoint, see the [CC3200 SimpleLink Wi-Fi and IoT Solution With MCU LaunchPad Getting Started Guide](http://www.ti.com/lit/pdf/swru376).
 
-### Installing Certificate Authority 
+### Installing Certificate Authority
 
 The [CC3200](http://www.ti.com/product/cc3200) includes serial flash that stores files as well as the current program. It exposes a filesystem so that  files can be referenced by a path in the program. To transfer files to the device, UniFlash is used.
 
